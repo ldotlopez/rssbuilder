@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+bs4 = "*"
+feedgen = "*"
+pydantic = "*"
+pyyaml = "*"
+platformdirs = "*"
+
+[dev-packages]
+ipython = "*"
+ipdb = "*"
+pre-commit = "*"
+
+[requires]
+python_version = "3.11"

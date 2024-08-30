@@ -1,0 +1,22 @@
+{
+    "folders":
+    [
+        {
+            "path": ".",
+            "follow_symlinks": true,
+            "file_exclude_patterns": [
+                "*.bck",
+                "*.pyc",
+            ],
+            "folder_exclude_patterns": [
+                "*.bck",
+                "*.egg-info",
+                ".mypy_cache",
+                ".venv",
+                "__pycache__",
+                "core",
+                "dist",
+            ],
+        }
+    ],
+}

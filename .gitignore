@@ -1,0 +1,4 @@
+.DS_Store
+Pipfile.lock
+config.yaml
+*.sublime-workspace
