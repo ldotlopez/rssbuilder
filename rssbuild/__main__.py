@@ -27,6 +27,16 @@ from .fixers import CanonicalURLs, FeedFiller
 logging.basicConfig()
 logging.getLogger(NAME).setLevel(logging.DEBUG)
 
+import re
+
+
+def slufigy(s: str) -> str:
+    s_ = re.sub(r"[^a-z0-9]", "", s, flags=re.IGNORECASE).lower()
+    if not s_:
+        raise ValueError(s)
+
+    return s_
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -35,6 +45,7 @@ def main():
     args = parser.parse_args()
 
     config = Config.from_filepath(args.config)
+    config.output_dir.mkdir(parents=True, exist_ok=True)
 
     for feed in config.feeds:
         buff = Fetcher().fetch(feed.url)
@@ -52,7 +63,10 @@ def main():
         for fix in fixers:
             fix.fix(data)
 
-        print(Builder().build(data))
+        rss = Builder().build(data)
+
+        output = config.output_dir / Path(f"{slufigy(feed.name)}.rss")
+        output.write_text(rss)
 
 
 if __name__ == "__main__":

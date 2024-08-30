@@ -35,12 +35,19 @@ class Config(pydantic.BaseModel):
     model_config = pydantic.ConfigDict(extra="forbid")
 
     feeds: list[Feed] = []
+    output_dir: Path
 
     @classmethod
     def from_filepath(cls, filepath: Path):
         with filepath.open("rt") as fh:
             data = yaml.load(fh, Loader=YAML_LOADER)
-            return Config(**data)
+            self = Config(**data)
+
+        self.output_dir = self.output_dir.expanduser()
+        if not self.output_dir.is_absolute():
+            self.output_dir = filepath.absolute().parent / self.output_dir
+
+        return self
 
 
 class Feed(pydantic.BaseModel):

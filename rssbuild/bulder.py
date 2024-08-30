@@ -48,7 +48,7 @@ class Builder:
             if entry.content:
                 fe.content(entry.content)
             if entry.image:
-                fe.enclosure(entry.image, type="image")
+                fe.enclosure(entry.image, type="image", length=0)
 
         # atomfeed = fg.atom_str(pretty=True)  # Get the ATOM feed as string
         rssfeed = fg.rss_str(pretty=True)  # Get the RSS feed as string
