@@ -68,15 +68,13 @@ class Parser:
         link_q = Query(
             selector="head link", attributes={"rel": "canonical"}, target="href"
         )
-        link_ = get_one(soup, link_q) or ""
+        feed_link = get_one(soup, link_q) or ""
 
-        # if link_ is None:
-        #     raise ValueError("head link [rel='canonical'] missing")
+        feed_title = (get_one(soup, "head title") or "").strip()
 
         ret = ParsedBuffer(
-            link=link_,
-            title=get_one(soup, "head title"),
-            description="x",
+            link=feed_link,
+            title=feed_title,
             entries=[parse_entry(x) for x in soup.select(entries)],
         )
 

@@ -47,7 +47,9 @@ class Feed(pydantic.BaseModel):
     model_config = pydantic.ConfigDict(extra="forbid")
 
     url: str
+    description: str
     queries: Queries
+    title: str = ""
 
 
 class Queries(pydantic.BaseModel):

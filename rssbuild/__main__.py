@@ -22,7 +22,7 @@ from pathlib import Path
 from pprint import pprint as pp
 
 from . import NAME, Builder, Config, Fetcher, Parser
-from .fixers import FixURLs
+from .fixers import CanonicalURLs, FeedFiller
 
 logging.basicConfig()
 logging.getLogger(NAME).setLevel(logging.DEBUG)
@@ -48,7 +48,7 @@ def main():
             date=feed.queries.date,
         )
 
-        fixers = [FixURLs(feed=feed)]
+        fixers = [FeedFiller(feed=feed), CanonicalURLs(feed=feed)]
         for fix in fixers:
             fix.fix(data)
 

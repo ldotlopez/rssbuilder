@@ -22,7 +22,17 @@ from .models import Feed
 from .parser import ParsedBuffer
 
 
-class FixURLs:
+class FeedFiller:
+    def __init__(self, feed: Feed):
+        self.title = feed.title
+        self.description = feed.description
+
+    def fix(self, data: ParsedBuffer):
+        data.title = data.title or self.title
+        data.description = data.description or self.description
+
+
+class CanonicalURLs:
     def __init__(self, feed: Feed):
         self.feed_url = feed.url
 
