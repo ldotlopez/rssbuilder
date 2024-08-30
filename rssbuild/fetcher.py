@@ -77,7 +77,7 @@ class Cache:
         filepath = self._calc_filepath(url)
         filepath.parent.mkdir(parents=True, exist_ok=True)
 
-        filepath.write_bytes(content)
+        filepath.write_bytes(contents)
         LOGGER.debug(f"cache save: {url} ({len(contents)} bytes)")
 
 

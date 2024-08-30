@@ -22,6 +22,7 @@ from pathlib import Path
 from pprint import pprint as pp
 
 from . import NAME, Builder, Config, Fetcher, Parser
+from .fixers import FixURLs
 
 logging.basicConfig()
 logging.getLogger(NAME).setLevel(logging.DEBUG)
@@ -47,21 +48,11 @@ def main():
             date=feed.queries.date,
         )
 
+        fixers = [FixURLs(feed=feed)]
+        for fix in fixers:
+            fix.fix(data)
+
         print(Builder().build(data))
-    # buff = Fetcher().fetch("https://www.tvcs.tv/noticies/")
-
-    # data = Parser().parse(
-    #     buff,
-    #     entry=".rss_item",
-    #     link=Query(".title a", extract="href"),
-    #     title=".title",
-    #     image=Query("amp-img", extract="src"),
-    #     content=".rss_content p",
-    #     date=".rss_content small",
-    # )
-    # pp(data)
-
-    # print(Builder().build(data))
 
 
 if __name__ == "__main__":

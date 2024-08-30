@@ -16,7 +16,7 @@
 # USA.
 
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import bs4
 
@@ -26,18 +26,18 @@ from .query import Query, get_one
 @dataclass
 class ParsedEntry:
     link: str
-    title: str | None
-    content: str | None
-    image: str | None
-    date: str | None
+    title: str | None = None
+    content: str | None = None
+    image: str | None = None
+    date: str | None = None
 
 
 @dataclass
 class ParsedBuffer:
-    link: str
-    title: str | None
-    description: str | None
-    entries: list[ParsedEntry]
+    link: str = ""
+    title: str | None = None
+    description: str | None = None
+    entries: list[ParsedEntry] = field(default_factory=lambda: [])
 
 
 class Parser:
@@ -65,17 +65,13 @@ class Parser:
 
         soup = bs4.BeautifulSoup(buff, features="html.parser")
 
-        if (
-            link_ := get_one(
-                soup,
-                Query(
-                    selector="head link",
-                    attributes={"rel": "canonical"},
-                    target="href",
-                ),
-            )
-        ) is None:
-            raise ValueError(buff)
+        link_q = Query(
+            selector="head link", attributes={"rel": "canonical"}, target="href"
+        )
+        link_ = get_one(soup, link_q) or ""
+
+        # if link_ is None:
+        #     raise ValueError("head link [rel='canonical'] missing")
 
         ret = ParsedBuffer(
             link=link_,
