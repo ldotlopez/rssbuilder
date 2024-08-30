@@ -47,9 +47,19 @@ class Feed(pydantic.BaseModel):
     model_config = pydantic.ConfigDict(extra="forbid")
 
     url: str
-    description: str
+    name: str
+    description: str | None = None
     queries: Queries
-    title: str = ""
+    title: str | None = None
+
+    @pydantic.model_validator(mode="before")
+    @classmethod
+    def description_validator(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            data["description"] = data.get("description") or data["name"]
+            data["title"] = data.get("title") or data["name"]
+
+        return data
 
 
 class Queries(pydantic.BaseModel):
