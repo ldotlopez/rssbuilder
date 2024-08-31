@@ -19,11 +19,17 @@
 from __future__ import annotations
 
 import io
+import logging
 from pathlib import Path
 from typing import Any
 
+import platformdirs
 import pydantic
 import yaml
+
+from .consts import NAME
+
+LOGGER = logging.getLogger(__name__)
 
 try:
     YAML_LOADER = yaml.CLoader
@@ -36,6 +42,15 @@ class Config(pydantic.BaseModel):
 
     feeds: list[Feed] = []
     output_dir: Path
+    cache_dir: Path = Path(platformdirs.user_cache_path(NAME))
+
+    @staticmethod
+    def _resolve_path(base: Path, rel: Path) -> Path:
+        ret = rel.expanduser()
+        if not ret.is_absolute():
+            ret = base.parent / ret
+
+        return ret
 
     @classmethod
     def from_filepath(cls, filepath: Path):
@@ -43,9 +58,8 @@ class Config(pydantic.BaseModel):
             data = yaml.load(fh, Loader=YAML_LOADER)
             self = Config(**data)
 
-        self.output_dir = self.output_dir.expanduser()
-        if not self.output_dir.is_absolute():
-            self.output_dir = filepath.absolute().parent / self.output_dir
+        self.output_dir = cls._resolve_path(filepath, self.output_dir)
+        self.cache_dir = cls._resolve_path(filepath, self.cache_dir)
 
         return self
 

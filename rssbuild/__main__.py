@@ -22,6 +22,7 @@ from pathlib import Path
 from pprint import pprint as pp
 
 from . import NAME, Builder, Config, Fetcher, Parser
+from .cache import Cache, MissError
 from .fixers import CanonicalURLs, FeedFiller
 
 logging.basicConfig()
@@ -47,8 +48,15 @@ def main():
     config = Config.from_filepath(args.config)
     config.output_dir.mkdir(parents=True, exist_ok=True)
 
+    cache = Cache(config.cache_dir)
+
     for feed in config.feeds:
-        buff = Fetcher().fetch(feed.url)
+        try:
+            buff = cache.get(feed.url)
+        except MissError:
+            buff = Fetcher().fetch(feed.url)
+            cache.set(feed.url, buff)
+
         data = Parser().parse(
             buff,
             entries=feed.queries.entries,
