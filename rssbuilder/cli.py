@@ -18,8 +18,8 @@
 
 import argparse
 import logging
+import re
 from pathlib import Path
-from pprint import pprint as pp
 
 from . import NAME, Builder, Config, Fetcher, Parser
 from .cache import Cache, MissError
@@ -27,8 +27,6 @@ from .fixers import CanonicalURLs, FeedFiller
 
 logging.basicConfig()
 logging.getLogger(NAME).setLevel(logging.WARNING)
-
-import re
 
 
 def slufigy(s: str) -> str:

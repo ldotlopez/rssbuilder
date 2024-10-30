@@ -16,8 +16,6 @@
 # USA.
 
 
-from urllib import parse
-
 from .models import Feed
 from .parser import ParsedBuffer
 

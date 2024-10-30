@@ -16,4 +16,4 @@
 # USA.
 
 
-NAME = "rssbuild"
+NAME = "rssbuilder"
