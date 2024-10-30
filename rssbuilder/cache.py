@@ -22,7 +22,6 @@ class Cache:
 
         try:
             mtime = filepath.stat().st_mtime
-            LOGGER.debug(f"cache hit: {url}")
         except FileNotFoundError:
             LOGGER.debug(f"cache miss: {url}")
             raise MissError()
@@ -32,7 +31,10 @@ class Cache:
             LOGGER.debug(f"cache expired: {url}")
             raise MissError()
 
-        return filepath.read_bytes()
+        ret = filepath.read_bytes()
+        LOGGER.debug(f"cache hit: {url}")
+
+        return ret
 
     def set(self, url: str, contents: bytes) -> None:
         filepath = self._calc_filepath(url)

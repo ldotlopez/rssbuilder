@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[bdist_wheel]
+universal = 1
+
+[project]
+name = "rssbuilder"
+version = "0.0.0"
+dependencies = [
+    "bs4",
+    "feedgen",
+    "pydantic",
+    "pyyaml",
+    "platformdirs",
+    "importlib-metadata; python_version >= '3.11'",
+]
+readme = "README.md"
+description = "RSS builder"
+license = {file = "LICENSE"}
+
+
+[tool.setuptools]
+packages = ["rssbuilder"]
+
+[tool.black]
+target-version = ['py311']
+
+[tool.isort]
+profile = "black"
+
+[project.scripts]
+rssbuilder = "rssbuilder.cli:main"
