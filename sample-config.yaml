@@ -1,0 +1,28 @@
+output_dir: ./output
+cache_dir: ./cache
+feeds:
+  - url: https://www.tvcs.tv/noticies/
+    name: TVCS
+    queries:
+      entries: .rss_item
+      link:
+        selector: .title a
+        target: href
+      title: .title
+      image:
+        selector: amp-img
+        target: src
+      content: .rss_content p
+      date: .rss_content small
+
+  - name: Vive Castellón
+    url: https://www.vivecastellon.com/
+    queries:
+      entries: .top-noticias-noticia
+      link:
+        selector: a.top-noticias-noticia-mas-info
+        target: href
+      title: .top-noticias-noticia-title
+      image:
+        selector: .top-noticias-noticia img
+        target: src
