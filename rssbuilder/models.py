@@ -64,14 +64,27 @@ class Config(pydantic.BaseModel):
         return self
 
 
-class Feed(pydantic.BaseModel):
+class FeedInfo(pydantic.BaseModel):
     model_config = pydantic.ConfigDict(extra="forbid")
 
     url: str
-    name: str
-    description: str | None = None
+    name: str | None = ""
+    title: str | None = ""
+    description: str | None = ""
+
+    @pydantic.model_validator(mode="after")
+    def fill_missing_fields(self) -> FeedInfo:
+        self.name = self.name or self.url
+        self.title = self.title or self.url
+        self.description = self.description or self.url
+
+        return self
+
+
+class Feed(FeedInfo):
+    model_config = pydantic.ConfigDict(extra="forbid")
+
     queries: Queries
-    title: str | None = None
 
     @pydantic.model_validator(mode="before")
     @classmethod

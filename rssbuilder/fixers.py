@@ -18,13 +18,13 @@
 
 import abc
 
-from .models import Feed
+from .models import FeedInfo
 from .parser import ParsedBuffer
 
 
 class Fixer:
-    def __init__(self, feed: Feed):
-        self.feed = feed
+    def __init__(self, feed_info: FeedInfo):
+        self.feed_info = feed_info
 
     @abc.abstractmethod
     def fix(self, data: ParsedBuffer):
@@ -33,7 +33,7 @@ class Fixer:
 
 class CanonicalURLs(Fixer):
     def fix(self, data: ParsedBuffer):
-        data.link = data.link or self.feed.url
+        data.link = data.link or self.feed_info.url
 
         for entry in data.entries:
             entry.link = self.as_canonical(entry.link)
@@ -41,7 +41,7 @@ class CanonicalURLs(Fixer):
                 entry.image = self.as_canonical(entry.image)
 
     def build_url(self, partial_url: str) -> str:
-        return self.feed.url.rstrip("/") + "/" + partial_url.lstrip("/")
+        return self.feed_info.url.rstrip("/") + "/" + partial_url.lstrip("/")
 
     def as_canonical(self, url: str) -> str:
         if url[0] == "/":
@@ -52,8 +52,8 @@ class CanonicalURLs(Fixer):
 
 class FeedFiller(Fixer):
     def fix(self, data: ParsedBuffer):
-        data.title = data.title or self.feed.title
-        data.description = data.description or self.feed.description
+        data.title = data.title or self.feed_info.title
+        data.description = data.description or self.feed_info.description
 
 
 ALL = [FeedFiller, CanonicalURLs]
