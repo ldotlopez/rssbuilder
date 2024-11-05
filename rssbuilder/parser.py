@@ -19,7 +19,7 @@ from dataclasses import dataclass, field
 
 import bs4
 
-from .query import Query, get_one
+from .query import Query, get, get_one
 
 
 @dataclass
@@ -61,10 +61,15 @@ class Parser:
             if (link_ := get_one(tag, self.link)) is None:
                 raise ValueError(tag)
 
+            if self.content:
+                content = "\n".join([x or "" for x in get(tag, self.content)])
+            else:
+                content = None
+
             return ParsedEntry(
                 link=link_,
                 title=get_one(tag, self.title) if self.title else None,
-                content=get_one(tag, self.content) if self.content else None,
+                content=content,
                 image=get_one(tag, self.image) if self.image else None,
                 date=get_one(tag, self.date) if self.date else None,
             )

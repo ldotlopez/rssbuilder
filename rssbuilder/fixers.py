@@ -16,26 +16,24 @@
 # USA.
 
 
+import abc
+
 from .models import Feed
 from .parser import ParsedBuffer
 
 
-class FeedFiller:
+class Fixer:
     def __init__(self, feed: Feed):
-        self.title = feed.title
-        self.description = feed.description
+        self.feed = feed
 
+    @abc.abstractmethod
     def fix(self, data: ParsedBuffer):
-        data.title = data.title or self.title
-        data.description = data.description or self.description
+        pass
 
 
-class CanonicalURLs:
-    def __init__(self, feed: Feed):
-        self.feed_url = feed.url
-
+class CanonicalURLs(Fixer):
     def fix(self, data: ParsedBuffer):
-        data.link = data.link or self.feed_url
+        data.link = data.link or self.feed.url
 
         for entry in data.entries:
             entry.link = self.as_canonical(entry.link)
@@ -43,10 +41,19 @@ class CanonicalURLs:
                 entry.image = self.as_canonical(entry.image)
 
     def build_url(self, partial_url: str) -> str:
-        return self.feed_url.rstrip("/") + "/" + partial_url.lstrip("/")
+        return self.feed.url.rstrip("/") + "/" + partial_url.lstrip("/")
 
     def as_canonical(self, url: str) -> str:
         if url[0] == "/":
             return self.build_url(url)
 
         return url
+
+
+class FeedFiller(Fixer):
+    def fix(self, data: ParsedBuffer):
+        data.title = data.title or self.feed.title
+        data.description = data.description or self.feed.description
+
+
+ALL = [FeedFiller, CanonicalURLs]

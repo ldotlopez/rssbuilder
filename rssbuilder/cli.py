@@ -23,7 +23,7 @@ from pathlib import Path
 
 from . import NAME, Builder, Config, Fetcher, Parser
 from .cache import Cache, MissError
-from .fixers import CanonicalURLs, FeedFiller
+from .fixers import ALL as ALL_FIXERS
 
 logging.basicConfig()
 logging.getLogger(NAME).setLevel(logging.WARNING)
@@ -65,9 +65,8 @@ def main():
         )
         data = parser.parse(buff)
 
-        fixers = [FeedFiller(feed=feed), CanonicalURLs(feed=feed)]
-        for fix in fixers:
-            fix.fix(data)
+        for FixerCls in ALL_FIXERS:
+            FixerCls(feed).fix(data)
 
         rss = Builder().build(data)
 
