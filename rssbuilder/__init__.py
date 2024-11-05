@@ -16,7 +16,7 @@
 # USA.
 
 
-from .bulder import Builder
+from .builder import Builder
 from .consts import NAME
 from .fetcher import Fetcher
 from .models import Config
