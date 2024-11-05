@@ -55,8 +55,7 @@ def main():
             buff = Fetcher().fetch(feed.url)
             cache.set(feed.url, buff)
 
-        data = Parser().parse(
-            buff,
+        parser = Parser(
             entries=feed.queries.entries,
             link=feed.queries.link,
             title=feed.queries.title,
@@ -64,6 +63,7 @@ def main():
             content=feed.queries.content,
             date=feed.queries.date,
         )
+        data = parser.parse(buff)
 
         fixers = [FeedFiller(feed=feed), CanonicalURLs(feed=feed)]
         for fix in fixers:

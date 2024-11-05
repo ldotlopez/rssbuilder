@@ -16,9 +16,13 @@
 # USA.
 
 
+import logging
+
 from feedgen.feed import FeedGenerator
 
 from .parser import ParsedBuffer
+
+LOGGER = logging.getLogger(__name__)
 
 
 class Builder:
@@ -27,7 +31,10 @@ class Builder:
         fg.id(data.link)
         fg.link(href=data.link)
         fg.title(data.title)
-        fg.description(data.description)
+
+        if not data.description:
+            LOGGER.warning(f"Missing 'description' for {data.link}")
+        fg.description(data.description or data.title)
 
         # fg.id("http://lernfunk.de/media/654321")
         # fg.title("Some Testfeed")

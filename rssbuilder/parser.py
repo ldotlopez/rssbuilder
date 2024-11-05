@@ -15,7 +15,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
 # USA.
 
-
 from dataclasses import dataclass, field
 
 import bs4
@@ -41,26 +40,33 @@ class ParsedBuffer:
 
 
 class Parser:
-    def parse(
+    def __init__(
         self,
-        buff: bytes,
         entries: str,
         link: Query | str,
         title: Query | str | None,
         content: Query | str | None,
         date: Query | str | None,
         image: Query | str | None,
-    ) -> ParsedBuffer:
+    ) -> None:
+        self.entries = entries
+        self.link = link
+        self.title = title
+        self.content = content
+        self.date = date
+        self.image = image
+
+    def parse(self, buff: bytes) -> ParsedBuffer:
         def parse_entry(tag: bs4.Tag):
-            if (link_ := get_one(tag, link)) is None:
+            if (link_ := get_one(tag, self.link)) is None:
                 raise ValueError(tag)
 
             return ParsedEntry(
                 link=link_,
-                title=get_one(tag, title) if title else None,
-                content=get_one(tag, content) if content else None,
-                image=get_one(tag, image) if image else None,
-                date=get_one(tag, date) if date else None,
+                title=get_one(tag, self.title) if self.title else None,
+                content=get_one(tag, self.content) if self.content else None,
+                image=get_one(tag, self.image) if self.image else None,
+                date=get_one(tag, self.date) if self.date else None,
             )
 
         soup = bs4.BeautifulSoup(buff, features="html.parser")
@@ -75,7 +81,7 @@ class Parser:
         ret = ParsedBuffer(
             link=feed_link,
             title=feed_title,
-            entries=[parse_entry(x) for x in soup.select(entries)],
+            entries=[parse_entry(x) for x in soup.select(self.entries)],
         )
 
         return ret
